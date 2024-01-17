@@ -1,0 +1,10 @@
+.vscode/
+dist/
+build/
+node_modules/
+.dockerignore
+.env.example
+.gitignore
+*.md
+*.spec.ts
+dockerfile
