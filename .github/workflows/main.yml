@@ -25,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Change working directory
-        run: cd ../
+        run: cd ../../
 
       - name: Build and test
         run: |
