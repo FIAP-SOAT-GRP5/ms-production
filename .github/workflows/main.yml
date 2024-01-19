@@ -11,12 +11,15 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [14]
+        node-version: [20]
 
     steps:
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
+
+      - name: Clear npm cache
+        run: npm cache clean -f
 
       - name: Install dependencies
         run: npm install
