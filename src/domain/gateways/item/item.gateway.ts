@@ -1,13 +1,9 @@
-import { IItemGateway } from 'src/domain/interfaces/item/item.gateway.interface';
+import { IItemGateway } from '../../../domain/interfaces/item/item.gateway.interface';
 
 import { ItemToCreateDto } from '../../dtos/item-to-create.dto';
 import { ItemToUpdateDto } from '../../dtos/item-to-update.dto';
 import { Item } from '../../entities/item.entity';
-// import { IItemRepository } from '../../interfaces/Item/item-repository.interface';
-// import { IItemGateway } from '../../interfaces/Item/item.gateway.interface';
 import { TypeItem } from '../../value-objects/type-item';
-
-import { IItemRepository } from 'src/domain/interfaces/item/item-repository.interface';
 
 export class ItemGateway implements IItemGateway {
   constructor(private readonly itemRepository: any) {}

@@ -1,4 +1,4 @@
-import { CreateItemDto } from 'src/framework/modules/item/dtos/create-item.dto';
+import { CreateItemDto } from '../../../framework/modules/item/dtos/create-item.dto';
 import { Item } from '../../entities/item.entity';
 import { ICreateItemUseCase } from '../../interfaces/item/create-item.use-case.interface';
 import { IItemGateway } from '../../interfaces/item/item.gateway.interface';

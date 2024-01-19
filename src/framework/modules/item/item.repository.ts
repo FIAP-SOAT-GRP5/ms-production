@@ -1,13 +1,14 @@
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Item } from 'src/domain/entities/item.entity';
-import { IItemRepository } from 'src/domain/interfaces/item/item-repository.interface';
+
+import { Item } from '../../../domain/entities/item.entity';
+import { IItemRepository } from '../../../domain/interfaces/item/item-repository.interface';
 import {
   EntityPartial,
   FindOptionsWhereValue,
-} from 'src/domain/utils/repository';
-import { ItemEntity } from 'src/framework/entities/item.entity';
-import { Repository } from 'typeorm';
+} from '../../../domain/utils/repository';
+import { ItemEntity } from '../../../framework/entities/item.entity';
 
 @Injectable()
 export class ItemRepository implements IItemRepository {

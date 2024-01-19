@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { ItemEntity } from 'src/framework/entities/item.entity';
+import { ItemEntity } from '../../../framework/entities/item.entity';
 import { buildCreateItemUseCase } from '../../../domain/factories/item/create-item.use-case.factory';
 import { buildGetItemUseCase } from '../../../domain/factories/item/get-item.use-case.factory';
 import { buildItemController } from '../../../domain/factories/item/item.controller.factory';
@@ -11,12 +11,12 @@ import { buildUpdateItemUseCase } from '../../../domain/factories/item/update-it
 import { ItemApi } from './item.api';
 import { ItemRepository } from './item.repository';
 import {
+  UPDATE_ITEM_USE_CASE,
   CREATE_ITEM_USE_CASE,
   GET_ITEM_USE_CASE,
   ITEM_CONTROLLER,
   ITEM_GATEWAY,
-  UPDATE_ITEM_USE_CASE,
-} from 'src/domain/symbols/item.symbols';
+} from '../../../domain/symbols/item.symbols';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ItemEntity])],

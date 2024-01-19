@@ -4,8 +4,8 @@ import { IUpdateItemUseCase } from '../interfaces/item/update-item.use-case.inte
 import { ICreateItemUseCase } from '../interfaces/item/create-item.use-case.interface';
 import { IGetItemUseCase } from '../interfaces/item/get-item.use-case.interface';
 
-import { CreateItemDto } from 'src/framework/modules/item/dtos/create-item.dto';
-import { UpdateItemDto } from 'src/framework/modules/item/dtos/update-item.dto';
+import { CreateItemDto } from './../../framework/modules/item/dtos/create-item.dto';
+import { UpdateItemDto } from './../../framework/modules/item/dtos/update-item.dto';
 
 export class ItemController {
   constructor(
