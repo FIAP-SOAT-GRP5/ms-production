@@ -22,8 +22,11 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: List repository contents
+        run: ls -al
+
       - name: Change working directory
-        run: cd ms-production
+        run: cd ms-production/ms-production
 
       - name: Install dependencies
         run: npm install
