@@ -18,14 +18,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: Change working directory
+        run: cd /home/runner/work/ms-production
+
       - name: Clear npm cache
         run: npm cache clean -f
 
       - name: Install dependencies
         run: npm install
-
-      - name: Change working directory
-        run: cd ../../
 
       - name: Build and test
         run: |
