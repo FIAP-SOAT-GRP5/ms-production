@@ -14,15 +14,16 @@ jobs:
         node-version: [20]
 
     steps:
-      - uses: actions/setup-node@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
       - name: Change working directory
-        run: cd /home/runner/work/ms-production
-
-      - name: Clear npm cache
-        run: npm cache clean -f
+        run: cd ms-production
 
       - name: Install dependencies
         run: npm install
