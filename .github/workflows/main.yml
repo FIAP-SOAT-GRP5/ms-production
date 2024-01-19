@@ -26,7 +26,7 @@ jobs:
         run: ls -al
 
       - name: Change working directory
-        run: cd ms-production/ms-production
+        run: cd .
 
       - name: Install dependencies
         run: npm install
