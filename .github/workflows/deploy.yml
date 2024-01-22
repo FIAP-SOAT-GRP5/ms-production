@@ -1,0 +1,80 @@
+name: Deploy to ECR
+
+on:
+ workflow_run:
+  workflows: ["Execute Tests"]
+  types:
+   - 
+  branches:
+    - main
+
+jobs:
+ deploy:
+  if: ${{ github.event.workflow_run.conclusion == 'success' }}
+  name: 'Deploy to ECR'
+  runs-on: ubuntu-latest
+  environment: production
+  permissions: write-all
+
+  steps:
+   - name: Configure aws credentials
+     uses: aws-actions/configure-aws-credentials@v4
+     with:
+      aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      aws-region: ${{ vars.AWS_REGION }}
+
+   - name: Checkout
+     uses: actions/checkout@v3
+
+   - name: Login to Amazon ECR
+     id: login-ecr
+     uses: aws-actions/amazon-ecr-login@v2
+
+   - name: Create .env file
+     uses: SpicyPizza/create-envfile@v2.0.2
+     with:
+      envkey_NODE_ENV: 'production'
+      envkey_TZ: 'America/São Paulo'
+      envkey_PORT: 3000
+      envkey_DB_TYPE: 'mysql'
+      envkey_DB_HOST: ${{ vars.RDS_HOST }}
+      envkey_DB_PORT: 3306
+      envkey_DB_USERNAME: ${{ secrets.RDS_USER }}
+      envkey_DB_PASSWORD: ${{ secrets.RDS_PASSWORD }}
+      envkey_DB_DATABASE: ${{ vars.RDS_DATABASE }}
+      envkey_JWT_KEY: ${{ secrets.JWT_SECRET }}
+      envkey_AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      envkey_AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      envkey_QUEUE_CREATE_ORDER_URL: ${{ vars.QUEUE_CREATE_ORDER_URL }}
+
+   - name: Build, tag, and push image to Amazon ECR
+     id: build-image
+     env:
+      ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+      ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      IMAGE_TAG: ${{ github.sha }}
+     run: |
+      docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+      docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+      echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:latest" >> $GITHUB_OUTPUT
+
+   - name: Download task definition
+     run: |
+      aws ecs describe-task-definition --task-definition app --query taskDefinition > task-definition.json
+
+   - name: Fill in the new image ID in the Amazon ECS task definition
+     id: task-def
+     uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
+     with:
+      task-definition: task-definition.json
+      container-name: ${{ vars.ECS_TASK_CONTAINER_NAME }}
+      image: ${{ steps.build-image.outputs.image }}
+
+   - name: Deploy Amazon ECS task definition
+     uses: aws-actions/amazon-ecs-deploy-task-definition@df9643053eda01f169e64a0e60233aacca83799a
+     with:
+      task-definition: ${{ steps.task-def.outputs.task-definition }}
+      service: ${{ vars.ECS_SERVICE }}
+      cluster: ${{ vars.ECS_CLUSTER }}
+      wait-for-service-stability: true

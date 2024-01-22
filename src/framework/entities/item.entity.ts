@@ -7,7 +7,8 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IEntity } from '../../domain/interfaces/entity.interface';
+
+import { IEntity } from '../../domain/application/interfaces/entity.interface';
 import { CategoryEntity } from './category.entity';
 import { OrderItemEntity } from './order-item.entity';
 

@@ -1,5 +1,4 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-
 import { ToInt } from '../../../decorators/toint.decorator';
 import { ToNumber } from '../../../decorators/tonumber.decorator';
 

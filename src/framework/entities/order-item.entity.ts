@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { IEntity } from '../../domain/interfaces/entity.interface';
+import { IEntity } from './../../domain/application/interfaces/entity.interface';
 import { ItemEntity } from './item.entity';
 import { OrderEntity } from './order.entity';
 
