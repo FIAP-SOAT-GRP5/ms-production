@@ -1,3 +1,4 @@
+/* v8 ignore start */
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 import { getIntId } from '../utils/migration';
 
@@ -5,72 +6,28 @@ export class Initial1686015227728 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: 'category',
+        name: 'order',
         columns: [
           getIntId(),
           {
-            name: 'name',
+            name: 'status',
             type: 'varchar',
             isNullable: false,
           },
           {
-            name: 'description',
-            type: 'varchar',
-            isNullable: true,
-          },
-        ],
-      }),
-    );
-
-    await queryRunner.manager.insert('category', [
-      {
-        name: 'Lanche',
-      },
-      {
-        name: 'Acompanhamento',
-      },
-      {
-        name: 'Bebida',
-      },
-      {
-        name: 'Sobremesa',
-      },
-    ]);
-
-    await queryRunner.createTable(
-      new Table({
-        name: 'item',
-        columns: [
-          getIntId(),
-          {
-            name: 'name',
-            type: 'varchar',
-            isNullable: false,
-          },
-          {
-            name: 'description',
-            type: 'varchar',
+            name: 'finished_at',
+            type: 'timestamp',
             isNullable: true,
           },
           {
-            name: 'price',
-            type: 'decimal',
-            isNullable: false,
+            name: 'created_at',
+            type: 'timestamp',
+            default: 'now()',
           },
           {
-            name: 'category_id',
-            type: 'int',
-            isNullable: false,
-            unsigned: true,
-          },
-        ],
-        foreignKeys: [
-          {
-            columnNames: ['category_id'],
-            referencedTableName: 'category',
-            referencedColumnNames: ['id'],
-            onUpdate: 'CASCADE',
-            onDelete: 'CASCADE',
+            name: 'updated_at',
+            type: 'timestamp',
+            default: 'now()',
           },
         ],
       }),
@@ -78,7 +35,8 @@ export class Initial1686015227728 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable('item');
-    await queryRunner.dropTable('category');
+    await queryRunner.dropTable('order');
   }
 }
+
+/* v8 ignore stop */

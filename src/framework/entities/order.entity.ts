@@ -3,16 +3,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { IEntity } from './../../domain/application/interfaces/entity.interface';
+import { IEntity } from '../../domain/application/interfaces/entity.interface';
 import { OrderStatus } from '../../domain/enterprise/value-objects/order-status';
-import { PaymentStatus } from '../../domain/enterprise/value-objects/payment-status';
-import { ClientEntity } from './client.entity';
-import { OrderItemEntity } from './order-item.entity';
 
 @Entity('order')
 export class OrderEntity implements IEntity {
@@ -23,28 +19,11 @@ export class OrderEntity implements IEntity {
   @ApiProperty()
   status: OrderStatus;
 
-  @Column()
-  @ApiProperty()
-  status_payment: PaymentStatus;
-
-  @Column()
-  @ApiProperty()
-  finishedAt: Date;
-
   @CreateDateColumn()
   createdAt: Date;
 
   @UpdateDateColumn()
   updatedAt: Date;
-
-  @ManyToOne(() => ClientEntity, (item) => item.orders)
-  client: ClientEntity;
-
-  @OneToMany(() => OrderItemEntity, (item) => item.order, {
-    cascade: true,
-    persistence: true,
-  })
-  orderItems?: OrderItemEntity[];
 
   getId(): number {
     return this.id;

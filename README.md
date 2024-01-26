@@ -2,6 +2,8 @@
 
 Este repositório contém uma API para gerenciar pedidos em um restaurante/lanchonete. A API permite cadastrar produtos, clientes e realizar pedidos, além de consultar os pedidos em andamento e seus respectivos status. A API é documentada usando o Swagger, que fornece uma interface intuitiva para testar e explorar os endpoints.
 
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=FIAP-SOAT-GRP5_ms-order&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=FIAP-SOAT-GRP5_ms-order)
+
 ## Pré-requisitos
 
 - Node.js
@@ -75,10 +77,10 @@ Exemplo de dados para cadastrar um produto:
 
 ```json
 {
-  "name": "Coca-Cola",
-  "price": 7,
-  "description": "Refrigerante de 2L",
-  "category_id": 3
+	"name": "Coca-Cola",
+	"price": 7,
+	"description": "Refrigerante de 2L",
+	"category_id": 3
 }
 ```
 
@@ -113,9 +115,9 @@ Exemplo de valor com identificação do cliente:
 
 ```json
 {
-  "document": "0000000000",
-  "name": "FIAP",
-  "email": "aluno@fiap.com.br"
+	"document": "0000000000",
+	"name": "FIAP",
+	"email": "aluno@fiap.com.br"
 }
 ```
 
@@ -152,13 +154,13 @@ Exemplo de valor para cadastrar um pedido:
 
 ```json
 {
-  "itemsIds": [
-    {
-      "id": 0,
-      "quantity": 0
-    }
-  ],
-  "clientId": 0
+	"itemsIds": [
+		{
+			"id": 0,
+			"quantity": 0
+		}
+	],
+	"clientId": 0
 }
 ```
 
@@ -208,10 +210,10 @@ Exemplo de como preencher os valores para cadastrar um produto:
 
 ```json
 {
-  "name": "Coca-Cola",
-  "price": 7,
-  "description": "Refrigerante de 2L",
-  "category_id": 3
+	"name": "Coca-Cola",
+	"price": 7,
+	"description": "Refrigerante de 2L",
+	"category_id": 3
 }
 ```
 
@@ -223,9 +225,9 @@ Exemplo de valor com identificação do cliente:
 
 ```json
 {
-  "document": "0000000000",
-  "name": "FIAP",
-  "email": "aluno@fiap.com.br"
+	"document": "0000000000",
+	"name": "FIAP",
+	"email": "aluno@fiap.com.br"
 }
 ```
 
@@ -243,13 +245,13 @@ Exemplo de como preencher os valores para cadastrar um pedido:
 
 ```json
 {
-  "itemsIds": [
-    {
-      "id": 1,
-      "quantity": 2
-    }
-  ],
-  "clientId": 1
+	"itemsIds": [
+		{
+			"id": 1,
+			"quantity": 2
+		}
+	],
+	"clientId": 1
 }
 ```
 
@@ -258,3 +260,6 @@ Exemplo de como preencher os valores para cadastrar um pedido:
 Para consultar os pedidos em andamento e seus respectivos status, faça uma requisição GET para o endpoint `/list-processing-orders`.
 
 Essas rotas permitem que você cadastre produtos, clientes e pedidos, além de consultar os pedidos e seus respectivos status.
+
+teste
+teste2
