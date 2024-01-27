@@ -5,11 +5,11 @@ on:
     branches:
       - main
       - develop
-      - "*"
+      - '*'
 
 jobs:
   build:
-    name: "Build project"
+    name: 'Build project'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,8 +18,8 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
-          
+          node-version: 18
+
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v4
@@ -38,7 +38,7 @@ jobs:
         run: npm install
 
   lint:
-    name: "Validate lint"
+    name: 'Validate lint'
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -48,7 +48,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Cache node modules
         id: cache-npm
@@ -68,7 +68,7 @@ jobs:
         run: npm run lint
 
   test:
-    name: "Validate tests"
+    name: 'Validate tests'
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -78,7 +78,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
 
       - name: Cache node modules
         id: cache-npm
@@ -95,5 +95,19 @@ jobs:
             ${{ runner.os }}-
           run: npm install
 
+      - name: Run BDD tests
+        run: npm run test:bdd
+
       - name: Run tests with Jest
-        run: npm run test
+        run: npm run test:cov
+
+      - name: Analyze with SonarCloud
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: -Dsonar.projectKey=FIAP-SOAT-GRP5_ms-production
+            -Dsonar.organization=fiap-soat-grp5
+            -Dsonar.javascript.lcov.reportPaths=./coverage/lcov.info
+            -Dsonar.sources=src/

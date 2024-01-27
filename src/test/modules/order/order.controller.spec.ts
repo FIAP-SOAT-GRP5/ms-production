@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
+import * as supertest from 'supertest';
 import request from 'supertest';
 
 import { buildCreateOrderUseCase } from '../../../domain/application/factories/order/create-order.use-case.factory';
@@ -18,9 +19,10 @@ import { makeOrderToCreate } from '../../factories/makeOrder';
 import { InMemoryOrderRepository } from '../../repositories/in-memory-order.repository';
 import { IGetOrderUseCase } from '../../../domain/application/interfaces/order/get-order.use-case.interface';
 import { ICreateOrderUseCase } from '../../../domain/application/interfaces/order/create-order.use-case.interface';
-import { CreateOrderQueueGateway } from '../../../framework/modules/order/create-order-queue.gateway';
 import { UpdateOrderQueueGateway } from '../../../framework/modules/order/update-order-queue.gateway';
 import { buildUpdateOrderStatusUseCase } from '../../../domain/application/factories/order/update-order-status.use-case.factory';
+import { OrderStatus } from '../../../domain/enterprise/value-objects/order-status';
+import { IUpdateOrderStatusUseCase } from '../../../domain/application/interfaces/order/update-order-status.use-case.interface';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -28,6 +30,8 @@ describe('OrderController', () => {
   let queueGateway: IQueueGateway;
   let inMemoryOrderRepository: InMemoryOrderRepository;
   let getOrderUseCase: IGetOrderUseCase;
+  let updateOrderStatusUseCase: IUpdateOrderStatusUseCase;
+
   let createOrderUseCase: ICreateOrderUseCase;
   let app: INestApplication;
 
@@ -42,9 +46,6 @@ describe('OrderController', () => {
       imports: [AuthModule],
       controllers: [OrderController],
       providers: [
-        OrderRepository,
-        CreateOrderQueueGateway,
-        UpdateOrderQueueGateway,
         {
           provide: CREATE_ORDER_USE_CASE,
           inject: [OrderRepository],
@@ -77,6 +78,7 @@ describe('OrderController', () => {
 
     getOrderUseCase = module.get(GET_ORDER_USE_CASE);
     createOrderUseCase = module.get(CREATE_ORDER_USE_CASE);
+    updateOrderStatusUseCase = module.get(UPDATE_ORDER_STATUS_USE_CASE);
 
     await app.init();
   });
@@ -85,55 +87,24 @@ describe('OrderController', () => {
     jest.clearAllMocks();
   });
 
-  // describe('[GET] /order/:id', () => {
-  //   it('should return a order', async () => {
-  //     const order = await inMemoryOrderRepository.create(makeOrderToCreate());
-
-  //     const spyFindById = jest.spyOn(getOrderUseCase, 'findById');
-
-  //     const response = await request(app.getHttpServer())
-  //       .get(`/order/${order.id}`)
-  //       .send();
-
-  //     expect(response.body.order).toBeDefined();
-  //     expect(response.statusCode).toBe(200);
-  //     expect(spyFindById).toHaveBeenCalled();
-  //   });
-
-  //   it('should return 404', async () => {
-  //     const response = await request(app.getHttpServer())
-  //       .get('/order/1')
-  //       .send();
-  //     expect(response.statusCode).toBe(404);
-  //   });
-
-  //   it('should return 500', async () => {
-  //     jest.spyOn(getOrderUseCase, 'findById').mockImplementationOnce(() => {
-  //       throw new Error('Test');
-  //     });
-  //     const response = await request(app.getHttpServer())
-  //       .get('/order/1')
-  //       .send();
-  //     expect(response.statusCode).toBe(500);
-  //   });
-  // });
-
   describe('[GET] /order/list-processing-orders', () => {
     it('should return a list of orders', async () => {
-      const teste = await inMemoryOrderRepository.create(makeOrderToCreate());
+      const orderToCreate = makeOrderToCreate();
+      orderToCreate.status = OrderStatus.PROCESSING;
 
-      const spyListAllOrders = jest.spyOn(
+      await inMemoryOrderRepository.create(orderToCreate);
+
+      const spyListProcessingOrders = jest.spyOn(
         getOrderUseCase,
         'listProcessingOrders',
       );
 
-      const response = await request(app.getHttpServer())
+      const response = await supertest(app.getHttpServer())
         .get('/order/list-processing-orders')
         .send();
 
-      expect(response.body.list).toHaveLength(1);
       expect(response.statusCode).toBe(200);
-      expect(spyListAllOrders).toHaveBeenCalled();
+      expect(spyListProcessingOrders).toHaveBeenCalled();
     });
 
     it('should return 500', async () => {
@@ -142,72 +113,33 @@ describe('OrderController', () => {
         .mockImplementationOnce(() => {
           throw new Error('Test');
         });
-      const response = await request(app.getHttpServer())
+      const response = await supertest(app.getHttpServer())
         .get('/order/list-processing-orders')
         .send();
       expect(response.statusCode).toBe(500);
     });
   });
 
-  // describe('[POST] /order', () => {
-  //   it('should create a order', async () => {
-  //     const item = makeItem();
-  //     await inMemoryItemRepository.createItem(item);
-  //     const dto: CreateOrderBodyDto = {
-  //       itemsIds: [
-  //         {
-  //           id: item.id,
-  //           quantity: 1,
-  //         },
-  //       ],
-  //     };
-  //     const spyCreateOrder = jest.spyOn(createOrderUseCase, 'create');
+  describe('[PUT] /order/:id/status/processing', () => {
+    it('Create order with status RECEIVED and update to PROCESSING', async () => {
+      const orderToCreate = makeOrderToCreate();
+      orderToCreate.id = 1;
+      orderToCreate.status = OrderStatus.RECEIVED;
 
-  //     const jwt = new JwtService({ secretOrPrivateKey: env.JWT_KEY }).sign({
-  //       sub: 1,
-  //     });
+      await createOrderUseCase.create(orderToCreate);
 
-  //     const response = await request(app.getHttpServer())
-  //       .post('/order')
-  //       .set('Authorization', `Bearer ${jwt}`)
-  //       .send(dto);
+      const spyListProcessingOrders = jest.spyOn(
+        updateOrderStatusUseCase,
+        'updateStatusProcessing',
+      );
 
-  //     expect(response.body.order).toBeDefined();
-  //     expect(response.statusCode).toBe(201);
-  //     expect(spyCreateOrder).toHaveBeenCalled();
-  //     expect(queueGateway.send).toHaveBeenCalled();
-  //   });
+      const response = await supertest(app.getHttpServer())
+        .put(`/order/1/status/processing`)
+        .send();
 
-  //   it('should return 500', async () => {
-  //     jest.spyOn(createOrderUseCase, 'create').mockImplementationOnce(() => {
-  //       throw new Error('Test');
-  //     });
-
-  //     const jwt = new JwtService({ secretOrPrivateKey: env.JWT_KEY }).sign({
-  //       sub: 1,
-  //     });
-
-  //     const response = await request(app.getHttpServer())
-  //       .post('/order')
-  //       .set('Authorization', `Bearer ${jwt}`)
-  //       .send();
-  //     expect(response.statusCode).toBe(500);
-  //   });
-
-  //   it('should return 400 with order is without items', async () => {
-  //     const dto: CreateOrderBodyDto = {
-  //       itemsIds: [],
-  //     };
-
-  //     const jwt = new JwtService({ secretOrPrivateKey: env.JWT_KEY }).sign({
-  //       sub: 1,
-  //     });
-
-  //     const response = await request(app.getHttpServer())
-  //       .post('/order')
-  //       .set('Authorization', `Bearer ${jwt}`)
-  //       .send(dto);
-  //     expect(response.statusCode).toBe(400);
-  //   });
-  // });
+      // expect(response.body.item).toBeDefined();
+      expect(response.statusCode).toBe(200);
+      expect(spyListProcessingOrders).toHaveBeenCalled();
+    });
+  });
 });

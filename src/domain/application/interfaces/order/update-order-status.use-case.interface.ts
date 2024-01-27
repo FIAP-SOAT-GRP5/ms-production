@@ -6,6 +6,5 @@ export interface IUpdateOrderStatusUseCase {
   updateStatusProcessing(id: number): Promise<Order>;
   updateStatusReady(id: number): Promise<Order>;
   updateStatusFinished(id: number): Promise<Order>;
-  updateStatusFinished(id: number): Promise<Order>;
 }
 /* v8 ignore start */

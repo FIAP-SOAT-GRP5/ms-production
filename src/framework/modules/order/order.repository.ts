@@ -15,19 +15,6 @@ export class OrderRepository implements IOrderRepository {
     private readonly orderRepository: Repository<OrderEntity>,
   ) {}
 
-  updateStatusReceived(id: number): Promise<Order> {
-    throw new Error('Method not implemented.');
-  }
-  updateStatusProcessing(id: number): Promise<Order> {
-    throw new Error('Method not implemented.');
-  }
-  updateStatusReady(id: number): Promise<Order> {
-    throw new Error('Method not implemented.');
-  }
-  updateStatusFinished(id: number): Promise<Order> {
-    throw new Error('Method not implemented.');
-  }
-
   listProcessingOrders(): Promise<Order[]> {
     return this.orderRepository.find({
       where: {
