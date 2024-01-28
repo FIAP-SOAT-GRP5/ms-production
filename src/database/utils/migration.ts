@@ -1,3 +1,4 @@
+/* v8 ignore start */
 import { TableColumnOptions } from 'typeorm';
 
 export const getIntId = (): TableColumnOptions => {
@@ -11,3 +12,4 @@ export const getIntId = (): TableColumnOptions => {
     unsigned: true,
   };
 };
+/* v8 ignore stop */

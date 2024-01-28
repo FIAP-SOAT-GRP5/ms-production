@@ -1,3 +1,4 @@
+/* v8 ignore start */
 import { registerAs } from '@nestjs/config';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from 'typeorm-naming-strategies';
@@ -25,3 +26,4 @@ export function getDbConfig(): TypeOrmModuleOptions {
 export default registerAs('database', () => ({
   ...getDbConfig(),
 }));
+/* v8 ignore stop */

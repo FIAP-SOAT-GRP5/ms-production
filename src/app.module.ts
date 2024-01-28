@@ -1,16 +1,14 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { OrderModule } from './framework/modules/order/order.module';
 import { getDbConfig } from './config/database';
-
-import { ItemModule } from './framework/modules/item/item.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       ...getDbConfig(),
     }),
-    ItemModule,
+    OrderModule,
   ],
 })
 export class AppModule {}
