@@ -8,15 +8,12 @@ import {
   Res,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-
 import { Response } from 'express';
-
 import {
   GET_ORDER_USE_CASE,
   UPDATE_ORDER_STATUS_USE_CASE,
 } from '../../../domain/application/symbols/order.symbols';
 import { IGetOrderUseCase } from '../../../domain/application/interfaces/order/get-order.use-case.interface';
-
 import { OrderNotFoundError } from '../../../core/errors/order-not-found.error';
 import { InvalidOrderStatusError } from '../../../core/errors/invalid-order-status.error';
 import { IUpdateOrderStatusUseCase } from '../../../domain/application/interfaces/order/update-order-status.use-case.interface';

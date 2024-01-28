@@ -1,8 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import * as supertest from 'supertest';
 import request from 'supertest';
-
+import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import { buildCreateOrderUseCase } from '../../../src/domain/application/factories/order/create-order.use-case.factory';
 import { buildGetOrderUseCase } from '../../../src/domain/application/factories/order/get-order.use-case.factory';
 import { IQueueGateway } from '../../../src/domain/application/interfaces/queue/queue.gateway.interface';
@@ -48,6 +47,14 @@ describe('OrderController', () => {
       controllers: [OrderController],
       providers: [
         {
+          provide: UpdateOrderQueueGateway,
+          useValue: queueGateway,
+        },
+        {
+          provide: OrderRepository,
+          useValue: inMemoryOrderRepository,
+        },
+        {
           provide: CREATE_ORDER_USE_CASE,
           inject: [OrderRepository],
           useFactory: buildCreateOrderUseCase,
@@ -92,21 +99,18 @@ describe('OrderController', () => {
 
   describe('[GET] /order/list-processing-orders', () => {
     it('should return a list of orders', async () => {
-      const orderToCreate = makeOrderToCreate();
-      orderToCreate.status = OrderStatus.PROCESSING;
-
-      await inMemoryOrderRepository.create(orderToCreate);
+      await inMemoryOrderRepository.create(makeOrderToCreate());
 
       const spyListProcessingOrders = vi.spyOn(
         getOrderUseCase,
         'listProcessingOrders',
       );
 
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .get('/order/list-processing-orders')
         .send();
 
-      const teste2 = response.request.url;
+      expect(response.body.list).toHaveLength(1);
       expect(response.statusCode).toBe(200);
       expect(spyListProcessingOrders).toHaveBeenCalled();
     });
@@ -117,7 +121,7 @@ describe('OrderController', () => {
           throw new Error('Test');
         },
       );
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .get('/order/list-processing-orders')
         .send();
       expect(response.statusCode).toBe(500);
@@ -126,7 +130,7 @@ describe('OrderController', () => {
 
   describe('[PUT] /order/:id/status/processing', () => {
     it('should return 404', async () => {
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put('/order/1/status/processing')
         .send();
       expect(response.statusCode).toBe(404);
@@ -139,7 +143,7 @@ describe('OrderController', () => {
       ).mockImplementationOnce(() => {
         throw new Error('Test');
       });
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put(`/order/1/status/processing`)
         .send();
       expect(response.statusCode).toBe(500);
@@ -156,7 +160,7 @@ describe('OrderController', () => {
         updateOrderStatusUseCase,
         'updateStatusProcessing',
       );
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put(`/order/1/status/processing`)
         .send();
 
@@ -168,7 +172,7 @@ describe('OrderController', () => {
 
   describe('[PUT] /order/:id/status/ready', () => {
     it('should return 404', async () => {
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put('/order/1/status/ready')
         .send();
       expect(response.statusCode).toBe(404);
@@ -181,7 +185,7 @@ describe('OrderController', () => {
       ).mockImplementationOnce(() => {
         throw new Error('Test');
       });
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put(`/order/1/status/ready`)
         .send();
       expect(response.statusCode).toBe(500);
@@ -198,7 +202,7 @@ describe('OrderController', () => {
         updateOrderStatusUseCase,
         'updateStatusReady',
       );
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put(`/order/1/status/ready`)
         .send();
 
@@ -210,7 +214,7 @@ describe('OrderController', () => {
 
   describe('[PUT] /order/:id/status/finished', () => {
     it('should return 404', async () => {
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put('/order/1/status/finished')
         .send();
       expect(response.statusCode).toBe(404);
@@ -223,7 +227,7 @@ describe('OrderController', () => {
       ).mockImplementationOnce(() => {
         throw new Error('Test');
       });
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put(`/order/1/status/finished`)
         .send();
       expect(response.statusCode).toBe(500);
@@ -240,7 +244,7 @@ describe('OrderController', () => {
         updateOrderStatusUseCase,
         'updateStatusFinished',
       );
-      const response = await supertest(app.getHttpServer())
+      const response = await request(app.getHttpServer())
         .put(`/order/1/status/finished`)
         .send();
 
