@@ -10,7 +10,6 @@ import {
   GET_ORDER_USE_CASE,
   UPDATE_ORDER_STATUS_USE_CASE,
 } from '../../../src/domain/application/symbols/order.symbols';
-import { AuthModule } from '../../../src/framework/modules/auth/auth.module';
 import { OrderController } from '../../../src/framework/modules/order/order.controller';
 import { OrderRepository } from '../../../src/framework/modules/order/order.repository';
 import { makeOrderToCreate } from '../../factories/makeOrder';
@@ -43,7 +42,6 @@ describe('OrderController', () => {
     process.env.JWT_KEY = 'test';
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [AuthModule],
       controllers: [OrderController],
       providers: [
         {
@@ -164,9 +162,9 @@ describe('OrderController', () => {
         .put(`/order/1/status/processing`)
         .send();
 
-      // expect(response.body.item).toBeDefined();
-      // expect(response.statusCode).toBe(200);
-      // expect(spyUpdateOrders).toHaveBeenCalled();
+      expect(response.statusCode).toBe(200);
+      expect(response.body.order).toBeDefined();
+      expect(spyUpdateOrders).toHaveBeenCalled();
     });
   });
 
@@ -191,10 +189,10 @@ describe('OrderController', () => {
       expect(response.statusCode).toBe(500);
     });
 
-    it('Create order with status RECEIVED and update to READY', async () => {
+    it('Create order with status PROCESSING and update to READY', async () => {
       const orderToCreate = makeOrderToCreate();
       orderToCreate.id = 1;
-      orderToCreate.status = OrderStatus.RECEIVED;
+      orderToCreate.status = OrderStatus.PROCESSING;
 
       await createOrderUseCase.create(orderToCreate);
 
@@ -206,9 +204,9 @@ describe('OrderController', () => {
         .put(`/order/1/status/ready`)
         .send();
 
-      // expect(response.body.item).toBeDefined();
-      // expect(response.statusCode).toBe(200);
-      // expect(spyUpdateOrders).toHaveBeenCalled();
+      expect(response.statusCode).toBe(200);
+      expect(response.body.order).toBeDefined();
+      expect(spyUpdateOrders).toHaveBeenCalled();
     });
   });
 
@@ -233,10 +231,10 @@ describe('OrderController', () => {
       expect(response.statusCode).toBe(500);
     });
 
-    it('Create order with status RECEIVED and update to FINISHED', async () => {
+    it('Create order with status READY and update to FINISHED', async () => {
       const orderToCreate = makeOrderToCreate();
       orderToCreate.id = 1;
-      orderToCreate.status = OrderStatus.RECEIVED;
+      orderToCreate.status = OrderStatus.READY;
 
       await createOrderUseCase.create(orderToCreate);
 
@@ -248,9 +246,9 @@ describe('OrderController', () => {
         .put(`/order/1/status/finished`)
         .send();
 
-      // expect(response.body.item).toBeDefined();
-      // expect(response.statusCode).toBe(200);
-      // expect(spyUpdateOrders).toHaveBeenCalled();
+      expect(response.statusCode).toBe(200);
+      expect(response.body.order).toBeDefined();
+      expect(spyUpdateOrders).toHaveBeenCalled();
     });
   });
 });

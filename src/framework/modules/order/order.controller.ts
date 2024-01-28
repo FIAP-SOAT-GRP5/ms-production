@@ -39,7 +39,6 @@ export class OrderController {
   }
 
   @Put(':id/status/processing')
-  // @AuthJwt()
   public async updateStatusProcessing(
     @Res() res: Response,
     @Param('id', ParseIntPipe) id: number,
@@ -61,7 +60,6 @@ export class OrderController {
   }
 
   @Put(':id/status/ready')
-  // @AuthJwt()
   public async updateStatusReady(
     @Res() res: Response,
     @Param('id', ParseIntPipe) id: number,
@@ -81,7 +79,6 @@ export class OrderController {
   }
 
   @Put(':id/status/finished')
-  // @AuthJwt()
   public async updateStatusFinished(
     @Res() res: Response,
     @Param('id', ParseIntPipe) id: number,
