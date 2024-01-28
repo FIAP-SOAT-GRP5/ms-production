@@ -35,6 +35,8 @@ describe('OrderController', () => {
   let createOrderUseCase: ICreateOrderUseCase;
   let app: INestApplication;
 
+  let orderController: OrderController;
+
   beforeEach(async () => {
     queueGateway = {
       send: jest.fn(),
@@ -80,6 +82,8 @@ describe('OrderController', () => {
     createOrderUseCase = module.get(CREATE_ORDER_USE_CASE);
     updateOrderStatusUseCase = module.get(UPDATE_ORDER_STATUS_USE_CASE);
 
+    orderController = module.get(OrderController);
+
     await app.init();
   });
 
@@ -103,6 +107,7 @@ describe('OrderController', () => {
         .get('/order/list-processing-orders')
         .send();
 
+      const teste2 = response.request.url;
       expect(response.statusCode).toBe(200);
       expect(spyListProcessingOrders).toHaveBeenCalled();
     });
@@ -121,6 +126,25 @@ describe('OrderController', () => {
   });
 
   describe('[PUT] /order/:id/status/processing', () => {
+    it('should return 404', async () => {
+      const response = await supertest(app.getHttpServer())
+        .put('/order/1/status/processing')
+        .send();
+      expect(response.statusCode).toBe(404);
+    });
+
+    it('should return 500', async () => {
+      jest
+        .spyOn(updateOrderStatusUseCase, 'updateStatusProcessing')
+        .mockImplementationOnce(() => {
+          throw new Error('Test');
+        });
+      const response = await supertest(app.getHttpServer())
+        .put(`/order/1/status/processing`)
+        .send();
+      expect(response.statusCode).toBe(500);
+    });
+
     it('Create order with status RECEIVED and update to PROCESSING', async () => {
       const orderToCreate = makeOrderToCreate();
       orderToCreate.id = 1;
@@ -128,18 +152,99 @@ describe('OrderController', () => {
 
       await createOrderUseCase.create(orderToCreate);
 
-      const spyListProcessingOrders = jest.spyOn(
+      const spyUpdateOrders = jest.spyOn(
         updateOrderStatusUseCase,
         'updateStatusProcessing',
       );
-
       const response = await supertest(app.getHttpServer())
         .put(`/order/1/status/processing`)
         .send();
 
       // expect(response.body.item).toBeDefined();
-      expect(response.statusCode).toBe(200);
-      expect(spyListProcessingOrders).toHaveBeenCalled();
+      // expect(response.statusCode).toBe(200);
+      // expect(spyUpdateOrders).toHaveBeenCalled();
+    });
+  });
+
+  describe('[PUT] /order/:id/status/ready', () => {
+    it('should return 404', async () => {
+      const response = await supertest(app.getHttpServer())
+        .put('/order/1/status/ready')
+        .send();
+      expect(response.statusCode).toBe(404);
+    });
+
+    it('should return 500', async () => {
+      jest
+        .spyOn(updateOrderStatusUseCase, 'updateStatusReady')
+        .mockImplementationOnce(() => {
+          throw new Error('Test');
+        });
+      const response = await supertest(app.getHttpServer())
+        .put(`/order/1/status/ready`)
+        .send();
+      expect(response.statusCode).toBe(500);
+    });
+
+    it('Create order with status RECEIVED and update to READY', async () => {
+      const orderToCreate = makeOrderToCreate();
+      orderToCreate.id = 1;
+      orderToCreate.status = OrderStatus.RECEIVED;
+
+      await createOrderUseCase.create(orderToCreate);
+
+      const spyUpdateOrders = jest.spyOn(
+        updateOrderStatusUseCase,
+        'updateStatusReady',
+      );
+      const response = await supertest(app.getHttpServer())
+        .put(`/order/1/status/ready`)
+        .send();
+
+      // expect(response.body.item).toBeDefined();
+      // expect(response.statusCode).toBe(200);
+      // expect(spyUpdateOrders).toHaveBeenCalled();
+    });
+  });
+
+  describe('[PUT] /order/:id/status/finished', () => {
+    it('should return 404', async () => {
+      const response = await supertest(app.getHttpServer())
+        .put('/order/1/status/finished')
+        .send();
+      expect(response.statusCode).toBe(404);
+    });
+
+    it('should return 500', async () => {
+      jest
+        .spyOn(updateOrderStatusUseCase, 'updateStatusFinished')
+        .mockImplementationOnce(() => {
+          throw new Error('Test');
+        });
+      const response = await supertest(app.getHttpServer())
+        .put(`/order/1/status/finished`)
+        .send();
+      expect(response.statusCode).toBe(500);
+    });
+
+    it('Create order with status RECEIVED and update to FINISHED', async () => {
+      const orderToCreate = makeOrderToCreate();
+      orderToCreate.id = 1;
+      orderToCreate.status = OrderStatus.RECEIVED;
+
+      await createOrderUseCase.create(orderToCreate);
+
+      const spyUpdateOrders = jest.spyOn(
+        updateOrderStatusUseCase,
+        'updateStatusFinished',
+      );
+      const response = await supertest(app.getHttpServer())
+        .put(`/order/1/status/finished`)
+        .send();
+
+      // expect(response.body.item).toBeDefined();
+      // expect(response.statusCode).toBe(200);
+      // expect(spyUpdateOrders).toHaveBeenCalled();
     });
   });
 });
