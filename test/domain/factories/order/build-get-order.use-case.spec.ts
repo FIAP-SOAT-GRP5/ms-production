@@ -1,4 +1,4 @@
-import { buildGetOrderUseCase } from '../../../../domain/application/factories/order/get-order.use-case.factory';
+import { buildGetOrderUseCase } from '../../../../src/domain/application/factories/order/get-order.use-case.factory';
 import { InMemoryOrderRepository } from '../../../repositories/in-memory-order.repository';
 
 let inMemoryOrderRepository: InMemoryOrderRepository;

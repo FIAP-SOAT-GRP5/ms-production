@@ -1,5 +1,5 @@
-import { OrderStatus } from '../../../../domain/enterprise/value-objects/order-status';
-import { GetOrderUseCase } from '../../../../domain/application/use-cases/order/get-order.use-case';
+import { GetOrderUseCase } from '../../../../src/domain/application/use-cases/order/get-order.use-case';
+import { OrderStatus } from '../../../../src/domain/enterprise/value-objects/order-status';
 import { makeOrderToCreate } from '../../../factories/makeOrder';
 import { InMemoryOrderRepository } from '../../../repositories/in-memory-order.repository';
 

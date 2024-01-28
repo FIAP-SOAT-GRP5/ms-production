@@ -1,28 +1,27 @@
 import { INestApplication } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
-import { MockFunctionMetadata, ModuleMocker } from 'jest-mock';
 import * as supertest from 'supertest';
 import request from 'supertest';
 
-import { buildCreateOrderUseCase } from '../../../domain/application/factories/order/create-order.use-case.factory';
-import { buildGetOrderUseCase } from '../../../domain/application/factories/order/get-order.use-case.factory';
-import { IQueueGateway } from '../../../domain/application/interfaces/queue/queue.gateway.interface';
+import { buildCreateOrderUseCase } from '../../../src/domain/application/factories/order/create-order.use-case.factory';
+import { buildGetOrderUseCase } from '../../../src/domain/application/factories/order/get-order.use-case.factory';
+import { IQueueGateway } from '../../../src/domain/application/interfaces/queue/queue.gateway.interface';
 import {
   CREATE_ORDER_USE_CASE,
   GET_ORDER_USE_CASE,
   UPDATE_ORDER_STATUS_USE_CASE,
-} from '../../../domain/application/symbols/order.symbols';
-import { AuthModule } from '../../../framework/modules/auth/auth.module';
-import { OrderController } from '../../../framework/modules/order/order.controller';
-import { OrderRepository } from '../../../framework/modules/order/order.repository';
+} from '../../../src/domain/application/symbols/order.symbols';
+import { AuthModule } from '../../../src/framework/modules/auth/auth.module';
+import { OrderController } from '../../../src/framework/modules/order/order.controller';
+import { OrderRepository } from '../../../src/framework/modules/order/order.repository';
 import { makeOrderToCreate } from '../../factories/makeOrder';
 import { InMemoryOrderRepository } from '../../repositories/in-memory-order.repository';
-import { IGetOrderUseCase } from '../../../domain/application/interfaces/order/get-order.use-case.interface';
-import { ICreateOrderUseCase } from '../../../domain/application/interfaces/order/create-order.use-case.interface';
-import { UpdateOrderQueueGateway } from '../../../framework/modules/order/update-order-queue.gateway';
-import { buildUpdateOrderStatusUseCase } from '../../../domain/application/factories/order/update-order-status.use-case.factory';
-import { OrderStatus } from '../../../domain/enterprise/value-objects/order-status';
-import { IUpdateOrderStatusUseCase } from '../../../domain/application/interfaces/order/update-order-status.use-case.interface';
+import { IGetOrderUseCase } from '../../../src/domain/application/interfaces/order/get-order.use-case.interface';
+import { ICreateOrderUseCase } from '../../../src/domain/application/interfaces/order/create-order.use-case.interface';
+import { UpdateOrderQueueGateway } from '../../../src/framework/modules/order/update-order-queue.gateway';
+import { buildUpdateOrderStatusUseCase } from '../../../src/domain/application/factories/order/update-order-status.use-case.factory';
+import { OrderStatus } from '../../../src/domain/enterprise/value-objects/order-status';
+import { IUpdateOrderStatusUseCase } from '../../../src/domain/application/interfaces/order/update-order-status.use-case.interface';
 
 const moduleMocker = new ModuleMocker(global);
 
@@ -39,7 +38,7 @@ describe('OrderController', () => {
 
   beforeEach(async () => {
     queueGateway = {
-      send: jest.fn(),
+      send: vi.fn(),
     };
     inMemoryOrderRepository = new InMemoryOrderRepository();
     process.env.JWT_KEY = 'test';
@@ -88,7 +87,7 @@ describe('OrderController', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('[GET] /order/list-processing-orders', () => {
@@ -98,7 +97,7 @@ describe('OrderController', () => {
 
       await inMemoryOrderRepository.create(orderToCreate);
 
-      const spyListProcessingOrders = jest.spyOn(
+      const spyListProcessingOrders = vi.spyOn(
         getOrderUseCase,
         'listProcessingOrders',
       );
@@ -113,11 +112,11 @@ describe('OrderController', () => {
     });
 
     it('should return 500', async () => {
-      jest
-        .spyOn(getOrderUseCase, 'listProcessingOrders')
-        .mockImplementationOnce(() => {
+      vi.spyOn(getOrderUseCase, 'listProcessingOrders').mockImplementationOnce(
+        () => {
           throw new Error('Test');
-        });
+        },
+      );
       const response = await supertest(app.getHttpServer())
         .get('/order/list-processing-orders')
         .send();
@@ -134,11 +133,12 @@ describe('OrderController', () => {
     });
 
     it('should return 500', async () => {
-      jest
-        .spyOn(updateOrderStatusUseCase, 'updateStatusProcessing')
-        .mockImplementationOnce(() => {
-          throw new Error('Test');
-        });
+      vi.spyOn(
+        updateOrderStatusUseCase,
+        'updateStatusProcessing',
+      ).mockImplementationOnce(() => {
+        throw new Error('Test');
+      });
       const response = await supertest(app.getHttpServer())
         .put(`/order/1/status/processing`)
         .send();
@@ -152,7 +152,7 @@ describe('OrderController', () => {
 
       await createOrderUseCase.create(orderToCreate);
 
-      const spyUpdateOrders = jest.spyOn(
+      const spyUpdateOrders = vi.spyOn(
         updateOrderStatusUseCase,
         'updateStatusProcessing',
       );
@@ -175,11 +175,12 @@ describe('OrderController', () => {
     });
 
     it('should return 500', async () => {
-      jest
-        .spyOn(updateOrderStatusUseCase, 'updateStatusReady')
-        .mockImplementationOnce(() => {
-          throw new Error('Test');
-        });
+      vi.spyOn(
+        updateOrderStatusUseCase,
+        'updateStatusReady',
+      ).mockImplementationOnce(() => {
+        throw new Error('Test');
+      });
       const response = await supertest(app.getHttpServer())
         .put(`/order/1/status/ready`)
         .send();
@@ -193,7 +194,7 @@ describe('OrderController', () => {
 
       await createOrderUseCase.create(orderToCreate);
 
-      const spyUpdateOrders = jest.spyOn(
+      const spyUpdateOrders = vi.spyOn(
         updateOrderStatusUseCase,
         'updateStatusReady',
       );
@@ -216,11 +217,12 @@ describe('OrderController', () => {
     });
 
     it('should return 500', async () => {
-      jest
-        .spyOn(updateOrderStatusUseCase, 'updateStatusFinished')
-        .mockImplementationOnce(() => {
-          throw new Error('Test');
-        });
+      vi.spyOn(
+        updateOrderStatusUseCase,
+        'updateStatusFinished',
+      ).mockImplementationOnce(() => {
+        throw new Error('Test');
+      });
       const response = await supertest(app.getHttpServer())
         .put(`/order/1/status/finished`)
         .send();
@@ -234,7 +236,7 @@ describe('OrderController', () => {
 
       await createOrderUseCase.create(orderToCreate);
 
-      const spyUpdateOrders = jest.spyOn(
+      const spyUpdateOrders = vi.spyOn(
         updateOrderStatusUseCase,
         'updateStatusFinished',
       );

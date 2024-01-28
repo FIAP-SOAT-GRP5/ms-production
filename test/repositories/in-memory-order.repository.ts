@@ -1,7 +1,7 @@
-import { OrderStatus } from '../../domain/enterprise/value-objects/order-status';
-import { IOrderRepository } from '../../domain/application/interfaces/order/order-repository.use-case.interface';
-import { OrderToCreateDto } from '../../domain/enterprise/dtos/order-to-create.dto';
-import { Order } from '../../domain/enterprise/entities/order.entity';
+import { OrderStatus } from '../../src/domain/enterprise/value-objects/order-status';
+import { IOrderRepository } from '../../src/domain/application/interfaces/order/order-repository.use-case.interface';
+import { OrderToCreateDto } from '../../src/domain/enterprise/dtos/order-to-create.dto';
+import { Order } from '../../src/domain/enterprise/entities/order.entity';
 
 export class InMemoryOrderRepository implements IOrderRepository {
   orders: Order[] = [];

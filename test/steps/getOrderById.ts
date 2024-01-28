@@ -1,9 +1,9 @@
 import { Before, Given, Then, When } from '@cucumber/cucumber';
 import { strictEqual } from 'assert';
-import { GetOrderUseCase } from '../../domain/application/use-cases/order/get-order.use-case';
+import { GetOrderUseCase } from '../../src/domain/application/use-cases/order/get-order.use-case';
 import { makeOrderToCreate } from '../factories/makeOrder';
 import { InMemoryOrderRepository } from '../repositories/in-memory-order.repository';
-import { IQueueGateway } from '../../domain/application/interfaces/queue/queue.gateway.interface';
+import { IQueueGateway } from '../../src/domain/application/interfaces/queue/queue.gateway.interface';
 
 let inMemoryOrderRepository: InMemoryOrderRepository;
 let queueGateway: IQueueGateway;
@@ -13,7 +13,7 @@ let order;
 
 Before(() => {
   queueGateway = {
-    send: jest.fn(),
+    send: vi.fn(),
   };
   inMemoryOrderRepository = new InMemoryOrderRepository();
   sut = new GetOrderUseCase(inMemoryOrderRepository);

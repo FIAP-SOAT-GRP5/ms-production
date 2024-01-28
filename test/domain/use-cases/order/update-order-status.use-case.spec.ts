@@ -1,7 +1,6 @@
-import { IQueueGateway } from '../../../../domain/application/interfaces/queue/queue.gateway.interface';
-import { OrderStatus } from '../../../../domain/enterprise/value-objects/order-status';
-import { CreateOrderDto } from '../../../../domain/enterprise/dtos/create-order.dto';
-
+import { IQueueGateway } from '../../../../src/domain/application/interfaces/queue/queue.gateway.interface';
+import { CreateOrderDto } from '../../../../src/domain/enterprise/dtos/create-order.dto';
+import { OrderStatus } from '../../../../src/domain/enterprise/value-objects/order-status';
 import { InMemoryOrderRepository } from '../../../repositories/in-memory-order.repository';
 
 let queueGateway: IQueueGateway;
@@ -10,7 +9,7 @@ let inMemoryOrderRepository: InMemoryOrderRepository;
 describe('UpdateOrderStatusUseCase', () => {
   beforeEach(() => {
     queueGateway = {
-      send: jest.fn(),
+      send: vi.fn(),
     };
 
     inMemoryOrderRepository = new InMemoryOrderRepository();

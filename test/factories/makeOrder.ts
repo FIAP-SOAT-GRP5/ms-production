@@ -1,4 +1,4 @@
-import { OrderToCreateDto } from '../../domain/enterprise/dtos/order-to-create.dto';
+import { OrderToCreateDto } from '../../src/domain/enterprise/dtos/order-to-create.dto';
 
 export function makeOrderToCreate() {
   const order = new OrderToCreateDto();
