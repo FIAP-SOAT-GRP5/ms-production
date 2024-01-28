@@ -24,7 +24,7 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async updateStatus(id: number, status: OrderStatus): Promise<boolean> {
-    const exists = this.orderRepository.findOneBy({ id });
+    const exists = await this.orderRepository.findOneBy({ id });
     if (!exists) return false;
     await this.orderRepository.save({
       id,
