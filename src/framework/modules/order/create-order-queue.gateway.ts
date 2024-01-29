@@ -8,13 +8,11 @@ import {
 import { Consumer } from 'sqs-consumer';
 import { CREATE_ORDER_USE_CASE } from '../../../domain/application/symbols/order.symbols';
 import { ICreateOrderUseCase } from '../../../domain/application/interfaces/order/create-order.use-case.interface';
-
 import env from '../../../config/env';
 
 @Injectable()
 export class CreateOrderQueueGateway
-  implements OnApplicationBootstrap, OnApplicationShutdown
-{
+  implements OnApplicationBootstrap, OnApplicationShutdown {
   private readonly consumer: Consumer;
 
   constructor(
@@ -22,7 +20,7 @@ export class CreateOrderQueueGateway
     private readonly createOrderUseCase: ICreateOrderUseCase,
   ) {
     this.consumer = Consumer.create({
-      queueUrl: env.QUEUE_CREATE_ORDER_URL ?? '',
+      queueUrl: `${env.QUEUE_CREATE_ORDER_URL ?? ''}_production`,
       region: env.AWS_REGION ?? 'us-east-1',
       handleMessage: async (message) => {
         console.log('CreateOrderQueueGateway');
