@@ -195,6 +195,7 @@ describe('OrderController', () => {
       orderToCreate.status = OrderStatus.PROCESSING;
 
       await createOrderUseCase.create(orderToCreate);
+      await updateOrderStatusUseCase.updateStatusProcessing(1);
 
       const spyUpdateOrders = vi.spyOn(
         updateOrderStatusUseCase,
@@ -237,6 +238,9 @@ describe('OrderController', () => {
       orderToCreate.status = OrderStatus.READY;
 
       await createOrderUseCase.create(orderToCreate);
+
+      await updateOrderStatusUseCase.updateStatusProcessing(1);
+      await updateOrderStatusUseCase.updateStatusReady(1);
 
       const spyUpdateOrders = vi.spyOn(
         updateOrderStatusUseCase,
