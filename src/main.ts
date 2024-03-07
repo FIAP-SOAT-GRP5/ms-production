@@ -16,6 +16,12 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
 
+  app.use((req, res, next) => {
+    res.set('X-Content-Type-Options', 'nosniff');
+    res.removeHeader('X-Powered-By');
+    next();
+  });
+
   await app.listen(3000);
   Logger.log(`Server running on port ${3000}`);
 }
