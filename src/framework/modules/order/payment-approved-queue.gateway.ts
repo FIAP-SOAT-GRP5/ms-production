@@ -8,7 +8,7 @@ import {
 import { Consumer } from 'sqs-consumer';
 import env from '../../../config/env';
 import { IUpdateOrderStatusUseCase } from '../../../domain/application/interfaces/order/update-order-status.use-case.interface';
-import { UPDATE_ORDER_USE_CASE } from '../../../domain/application/symbols/order.symbols';
+import { UPDATE_ORDER_STATUS_USE_CASE } from '../../../domain/application/symbols/order.symbols';
 
 @Injectable()
 export class PaymentApprovedQueueGateway
@@ -16,7 +16,7 @@ export class PaymentApprovedQueueGateway
 	private readonly consumer: Consumer;
 
 	constructor(
-		@Inject(UPDATE_ORDER_USE_CASE)
+		@Inject(UPDATE_ORDER_STATUS_USE_CASE)
 		private readonly updateOrderUseCase: IUpdateOrderStatusUseCase,
 	) {
 		this.consumer = Consumer.create({
